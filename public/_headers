@@ -1,0 +1,29 @@
+# Served by Cloudflare's static asset layer. Policies are per path and never on
+# /*: two policies on one path are both enforced, so a /* policy would cancel
+# the sandbox worker's own. The page policy sits on every HTML path. No inline script or style exists, so
+# 'self' is the whole policy for both. connect-src is wide on purpose: a mind may
+# live on this machine (localhost) or on any https server the player names, and
+# the in-tab runtime (wllama) fetches GGUF weights from Hugging Face and runs
+# inference in a worker it starts from a blob.
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  X-Frame-Options: DENY
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), microphone=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Robots-Tag: noindex, nofollow
+
+/
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Type: text/html; charset=utf-8
+
+/index.html
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+/delivered.html
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+# The puzzle sandbox: eval for villager-written code, and no network at all.
+/sandbox-worker.js
+  Content-Security-Policy: default-src 'none'; script-src 'unsafe-eval'; connect-src 'none'

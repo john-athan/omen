@@ -1,0 +1,20 @@
+{
+  // Omen, the village of small minds, as one Worker plus one Durable Object.
+  "name": "omen",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-01",
+  // Only ./public is uploaded; files are served before the Worker runs, so the
+  // Worker only ever sees /ws.
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "durable_objects": { "bindings": [{ "name": "VILLAGE", "class_name": "VillageObject" }] },
+  // SQLite-backed class, which the free plan allows. The village keeps no storage.
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["VillageObject"] }],
+  // Upgrade attempts per address: 10 a minute.
+  "ratelimits": [{ "name": "WS_LIMIT", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }],
+  // Distinct players in the last 7 days before proposals and votes open, and
+  // the vote weight a proposal needs to become active. Low while the village is small.
+  "vars": { "OMEN_OPEN_AT": "3", "OMEN_VOTE_MIN": "2" },
+  // Served on workers.dev. For your own domain add
+  // "routes": [{ "pattern": "omen.example.org", "custom_domain": true }]
+  "workers_dev": true
+}

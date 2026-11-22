@@ -1,0 +1,27 @@
+/* The public record page, on the game's tokens. */
+/* The game locks the page to the window; this page scrolls like a document. */
+html:has(body.delivered), body.delivered { height: auto; overflow: visible; }
+.delivered main { max-width: 820px; margin: 0 auto; padding: 56px 16px 64px; }
+.delivered h1 { font-size: clamp(28px, 5vw, 44px); }
+.delivered h2 { font-size: 22px; margin-top: var(--space-6); }
+.delivered a { color: var(--color-tallow-deep); }
+.delivered .task { border-top: 1px solid var(--color-rule); padding-top: var(--space-4); margin-top: var(--space-5); }
+.delivered .task h2 { margin: 0 0 4px; }
+.delivered .task > p { margin: 4px 0; color: var(--color-ink-2); }
+.delivered .bar { height: 8px; border-radius: 4px; background: var(--color-paper-3); overflow: hidden; margin: var(--space-3) 0 4px; }
+.delivered .bar b { display: block; height: 100%; background: var(--color-ok); }
+.delivered .items { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
+.delivered .items li { display: grid; gap: 2px; font-size: 14px; }
+.delivered .items b { font: 600 10px/1.4 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--color-tallow-deep); }
+.delivered .items em { font: italic 13px var(--font-display); color: var(--color-ink-3); }
+.delivered .items small { font-size: 11px; color: var(--color-ink-3); }
+.delivered .big { font: 600 40px/1 var(--font-display); color: var(--color-ink); }
+.delivered .big small { font-size: 16px; color: var(--color-ink-3); }
+.delivered .curve { width: 100%; max-width: 420px; height: auto; display: block; margin: var(--space-2) 0; }
+.delivered .curve .line { fill: none; stroke: var(--color-tallow); stroke-width: 2; }
+.delivered .curve circle { fill: var(--color-tallow-deep); }
+.delivered .curve .known { stroke: var(--color-ink-3); stroke-dasharray: 4 4; }
+.delivered .log { list-style: none; padding: 0; display: grid; gap: var(--space-2); font-size: 13px; }
+.delivered .log li { display: grid; gap: 2px; border-bottom: 1px dashed var(--color-rule); padding-bottom: 6px; }
+.delivered .log time { font: 11px var(--font-mono); color: var(--color-ink-3); }
+.delivered .log em { font-style: normal; color: var(--color-ink-3); }

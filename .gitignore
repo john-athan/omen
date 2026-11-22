@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.DS_Store
+# A deployment's own config (routes, domain), kept out of the shared one.
+wrangler.local.jsonc
+.work-local.json
+.society-local.sqlite
+.society-test*.sqlite
