@@ -21,6 +21,11 @@
 /index.html
   Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
+# Cloudflare serves /delivered.html as a 307 to /delivered, so the canonical path
+# needs the policy too; the .html rule alone left the page without one.
+/delivered
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
 /delivered.html
   Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
