@@ -15,6 +15,13 @@ const STEP_MS = 380;          // one tile per step
 const HEAR = 7;               // tiles: who hears speech and sees actions
 const ACT_GAP_MS = 1200;      // minimum time between decisions
 const OMEN_GAP_MS = 12000;    // a god may not shout constantly
+// Every message that lands in the chronicle reaches up to 80 sockets, so each
+// type gets its own floor under the socket rate. A well-behaved client sends
+// each of these at most once per decision (ACT_GAP_MS) and in practice far less.
+const TEND_GAP_MS = 4000;     // petting takes a walk to the animal and a whole decision; the animal sulks in between anyway
+const LEVEL_GAP_MS = 3000;    // a level needs several deeds, each one a decision; only a forged client climbs faster
+const WAKE_GAP_MS = 6000;     // sleep is a decision plus a memory compaction, so a real wake never follows the last one this fast
+const WORK_GAP_MS = 3000;     // a piece of work is a model call, seconds at best; valid search results are not lease-bound and repeat freely
 const MAX_AGENTS = 24;
 const PER_DEVICE = 4;         // villagers one connection (one device's household) may bring
 const MAX_CLIENTS = 80;
@@ -116,7 +123,11 @@ export class Village {
         send(c, { t: "work.paid", who: a.id, result: r });
         if (!r) return;
         const text = workLine(a.name, r);
-        if (text) this.emit({ kind: "work", who: a.id, name: a.name, text, hearers: this.near(a.x, a.y) });
+        const now = Date.now();
+        if (text && now - (a.workAt ?? 0) >= WORK_GAP_MS) {
+          a.workAt = now;
+          this.emit({ kind: "work", who: a.id, name: a.name, text, hearers: this.near(a.x, a.y) });
+        }
         this.boardChanged();
       });
     }
@@ -134,7 +145,7 @@ export class Village {
     else if (m.t === "thinking") a.thinking = !!m.on;
     else if (m.t === "tend" && !a.asleep) {
       const now = Date.now();
-      if (now - (a.tendedAt ?? 0) < 4000) return;
+      if (now - (a.tendedAt ?? 0) < TEND_GAP_MS) return;
       a.tendedAt = now;
       const pet = tend(this.animals, a, now);
       if (pet) this.emit({ kind: "animal", who: a.id, name: a.name, animal: pet.id, species: pet.kind, act: pet.act,
@@ -142,15 +153,22 @@ export class Village {
     }
     else if (m.t === "levelup") {
       // Cosmetic and client-reported: progress lives on the player's device.
+      const now = Date.now();
       const level = Math.max(1, Math.min(99, Number(m.level) || 1)), title = clean(m.title, 20);
       const promoted = title && title !== a.title;
       // Without this a client could fill every chronicle with level-ups at its full message rate.
       if (level === a.level && !promoted) return;
+      if (now - (a.levelAt ?? 0) < LEVEL_GAP_MS) return;
+      a.levelAt = now;
       a.level = level; if (title) a.title = title;
       this.emit({ kind: "level", who: a.id, name: a.name, text: promoted ? `${a.name} is now a ${a.title} ${a.job}` : `${a.name} has grown better at being a ${a.job}`, hearers: this.near(a.x, a.y) });
     }
     else if (m.t === "wake" && a.asleep) {
       a.asleep = false; a.activity = "waking up, groggy"; a.mood = clean(m.mood, 24) || "groggy";
+      // The body always wakes, or a dropped frame would leave it asleep for good; only the chronicle line is rationed.
+      const now = Date.now();
+      if (now - (a.wakeAt ?? 0) < WAKE_GAP_MS) return;
+      a.wakeAt = now;
       this.emit({ kind: "wake", who: a.id, name: a.name, place: placeAt(a.x, a.y)?.name ?? null, hearers: this.near(a.x, a.y) });
     }
     else if (m.t === "omen") {
