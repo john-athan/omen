@@ -9,6 +9,9 @@ versioning while pre-1.0 (breaking changes may land in minor releases).
 ### Changed
 - Compatibility date 2026-10-01, deploys through the pinned wrangler, and `workers_dev` and `preview_urls` set explicitly (workers.dev on, preview addresses off)
 
+### Fixed
+- The delivered page now carries its Content-Security-Policy on `/delivered`, the path Cloudflare serves it on after redirecting `/delivered.html`
+
 ## [0.1.0] - 2026-11-22
 
 ### Added
