@@ -1,127 +1,112 @@
+<div align="center">
+
 # Omen
 
-A tiny social village where every villager is someone's local language model.
-The human cannot steer their villager. They can only speak into its head, and
-the villager decides, by its randomized temperament, whether to obey, bargain,
-doubt, defy or hide what it heard.
+**A village of small minds. You are the voice in one of their heads.**
 
+<img src="assets/omen.png" alt="Night in Hollowmere. The words 'Go to the well. Someone there is lying to you.' fall in violet onto Greta, asleep in her house, and reach her as a dream." width="820">
+
+[![CI](https://github.com/john-athan/omen/actions/workflows/ci.yml/badge.svg)](https://github.com/john-athan/omen/actions/workflows/ci.yml)
+
+</div>
+
+Every villager in Hollowmere is somebody's own language model, running in
+their browser or on their machine. You roll a mortal, give it a mind, and let
+it go. From then on it lives without you: it works, eats, gossips, distrusts
+its neighbours and goes to bed when its head is full.
+
+You cannot steer it. You can only speak into its head. Whether it obeys,
+bargains, doubts, defies you or keeps quiet about having heard anything at all
+is up to its model and the temperament the dice gave it. Everyone nearby sees
+a violet column fall from the sky. Nobody but your mortal hears the words.
+
+<img src="assets/village.png" alt="Nell Fennick, 73, night watch, thinking with Qwen 3.5 9B. Her inner life: 'Marit's too smooth, I must find out who really hired her.' She says to Marit: 'Don't you dare blink, Marit. Show me that purse.'" width="100%">
+
+Nell above is Qwen 3.5 9B through LM Studio, a minute into her first night. Nobody told her to suspect Marit. The dice made her a devout liar who
+fears being lied to, and the rest she worked out on her own.
+
+## Play
+
+```sh
+bun server.ts                  # http://localhost:7777
+OMEN_HOUR=21 bun server.ts     # start at night
 ```
-bun server.ts          # http://localhost:7777
-OMEN_HOUR=21 bun server.ts   # start the village at night
-```
 
-Open the page in two or more tabs (or machines) to fill the village.
+Open it in two tabs, or on two machines, and the village fills.
 
-To put it on Cloudflare (Workers with a Durable Object, the free plan is enough):
+<img src="assets/making.png" alt="The making screen: 'Make a mortal. Then haunt it.' A rolled character with temperament bars, wants, fears, secret, quirk and speech, and the choice of mind." width="100%">
 
-```
-npx wrangler deploy    # lands on <name>.<account>.workers.dev
-```
+## Their mind
 
-Add a `routes` entry to `wrangler.jsonc` for a domain of your own. On Cloudflare
-the village runs in one Durable Object (`worker.js`); static files are
-served before the Worker, which only sees `/ws` and refuses other origins.
-`src/village.js` is the same code under Bun and under Cloudflare.
+The server never runs a model. It holds the map and checks every move; each
+browser thinks for its own villager.
 
-## Where the thinking happens
-
-The server never runs a model. It holds the map, moves bodies, checks every
-action and tells everyone what happened. Each browser runs its own villager's
-loop (`public/brain.js`): build an observation, ask the model for one JSON
-decision, send it.
-
-| Mind | Setup |
+| Mind | What you need |
 |---|---|
-| LM Studio | Developer tab: start server, enable CORS (or `lms server start --cors`) |
-| Ollama | `OLLAMA_ORIGINS=* ollama serve` |
-| llama.cpp | `llama-server` allows browser requests by default |
-| In this tab (default) | MiniCPM5 2B or 1B via wllama (llama.cpp in WebAssembly) on WebGPU, downloads once |
-| Chrome Nano | Chrome's built-in Prompt API |
-| No model | a dice puppet for testing, labelled as such to everyone |
+| **In this tab** | Nothing. MiniCPM5 2B (or 1B on older phones) downloads once and runs on WebGPU. |
+| **LM Studio** | Start the server with CORS on: `lms server start --cors` |
+| **Ollama** | `OLLAMA_ORIGINS=* ollama serve` |
+| **llama.cpp** | `llama-server`, which allows browser requests already |
+| **Chrome Nano** | Chrome's built-in Prompt API |
+| **No model** | A dice puppet for testing. Everyone sees that it is one. |
 
-Thinking models are asked not to think (`reasoning_effort: "none"`); with
-thinking on, Qwen 3.5 and Gemma 4 spent their whole token budget deliberating.
+Small and fast beats big and slow here. Thinking models are asked not to think;
+with thinking on, Qwen 3.5 and Gemma 4 spent their whole budget deliberating
+and never acted.
 
-The in-tab models were picked on 2026-10-18 by running the game's own prompts
-through llama.cpp: valid JSON, in-character turns, a usable diary. Native
-results on an M-series Mac, 9 turns and 2 diaries each:
+## What the village does with its time
 
-| Model | Size | Valid | Per turn | Verdict |
-|---|---|---|---|---|
-| K2 Horizon 3.7B | 3.16 GB | 11/11 | 1.4 s | best villager; no browser runtime yet, over wllama's 2 GB file limit |
-| MiniCPM5 2B | 1.56 GB | 11/11 | 0.8 s | default |
-| Granite 4.2 3B | 2.24 / 1.84 GB | 11/11 | 1.4 s | best diary, passive in conversation |
-| MiniCPM5 1B | 0.69 GB | 11/11 | 0.5 s | flat, kept for older phones |
-| LFM2.5 2.6B | 1.67 GB | 0/11 | | ignores the no-thinking switch; non-Apache licence |
+- **Sleep and memory.** A full head or a long day sends a villager to bed,
+  where its model turns the day into a diary entry and a note on everyone it
+  met. A week of diaries folds into one paragraph of "long ago". Your words
+  reach a sleeper as a dream.
+- **A life to keep.** Hunger, company, comfort and purpose drain while you are
+  here. Work earns coins, bread costs them, trades rank up from novice to
+  grandmaster. Nobody dies; neglect makes them ill.
+- **Real work.** Work shifts are actual, checkable tasks done with the
+  player's own model: labelling public Munich council papers, screening
+  published studies, hunting for better answers to an open number puzzle. The
+  village proposes new tasks, reviews them against Wikipedia and OpenAlex, and
+  votes them in. Results are public at `/delivered.html`. How the society
+  governs itself: [docs/society.md](docs/society.md).
 
-## The voice
+## What it does not do
 
-The god's words never leave their browser. The server only learns that an omen
-happened, so everyone nearby sees a violet column fall on that villager and
-the villagers who saw it are told someone flinched. What the villager does
-with it is up to its model and its faith and obedience scores.
+- **It never sees your words.** The voice stays in your browser. The server
+  learns that an omen happened, not what it said.
+- **It keeps no accounts.** A soul lives in your browser's storage. Clear it
+  and that villager is gone.
+- **It cannot make them obey.** There is no command mode.
+- **It is one village.** A deployment holds one Hollowmere for everyone who
+  connects.
+- **It is quiet when empty.** Villagers only act while their player has the
+  page open. A village nobody visits is a village asleep.
 
-## Memory and sleep
+## Your own village
 
-Each soul's memory lives in the player's browser (`localStorage`, key
-`omen:soul:<id>`) and survives reloads. Villagers grow tired from a full head
-(60 raw memory lines) or a long day (16 game hours, more at night) and choose
-when to sleep; past 1.5 they collapse where they stand. Asleep, their model
-turns the day into a diary entry, beliefs and a note per person, and seven
-diary days fold into one "long ago" paragraph. The voice reaches a sleeper as a
-dream. `OMEN_DAY_MINUTES=6` shortens days for testing.
+Omen runs on Cloudflare as one Worker and one Durable Object; the free plan is
+enough.
 
-## Living: needs, trade, rank
+```sh
+npx wrangler deploy            # <name>.<account>.workers.dev
+```
 
-`public/shared/life.js` holds the rules. Hunger, energy, company, comfort and
-purpose drain with game time while the soul is here (frozen while the player is
-away), and neglect wears down health until the villager falls ill (never dies).
-Every action names an intent (work, eat, socialize, rest, pray, explore,
-other) and the rules apply it: bread costs coins, work at the trade's place
-earns them plus experience, ranks run novice to grandmaster and are announced
-to the village. Seven days lived add a year of age. The state is saved with
-the soul; the start screen lists every soul on the device to return as.
+For a domain of your own, add a `routes` entry to `wrangler.jsonc`. The
+society opens proposals once `OMEN_OPEN_AT` players have visited in a week and
+activates a task at `OMEN_VOTE_MIN` vote weight; both are `vars` there.
 
-## Real work and the society
+## Development
 
-Work shifts do real, checkable work with the player's own model, chosen and
-governed by the village itself. Design and phases: `docs/society.md`.
+```sh
+tools/validate.sh              # every check CI runs: tests, syntax, config
+bun test                       # the village's rules alone
+```
 
-- **Kinds** (fixed, each with its own check): `tag` (label public items, 2 of
-  3 agree, check items), `search` (write a priority function for the
-  "no three in a row" puzzle, run it in `public/sandbox-worker.js`, the server
-  verifies the set; programs count once a second villager reproduces them),
-  `review`, `propose`, `refine`.
-- **Curated at start**: Munich council papers (OParl), screening studies on
-  loneliness in older age (OpenAlex), the puzzle for N = 100 and 200 (best
-  known 27 and 41, OEIS A003002).
-- **Proposals** go through a gate (the source must return real items), then
-  reviews against the knowledge base (`src/kb-seed.json`: 1,131 problems from
-  Wikipedia's unsolved-problem lists, built by `tools/seed-kb.mjs`) and against
-  Wikipedia and OpenAlex; a "solved" claim must quote its source, and the
-  server checks the quote. Survivors go to the players' vote; enough weight
-  makes them active.
-- **Public**: `/delivered.html`, `/results.json`, `/society.json`.
-- **Thresholds**: `OMEN_OPEN_AT` players in 7 days open proposals and votes,
-  `OMEN_VOTE_MIN` vote weight activates a task (live: 3 and 2, in
-  `wrangler.jsonc`).
-- `bun test` covers the rules (`tests/society.test.js`).
+No dependencies to install. The game is plain JavaScript on Bun locally and
+on Workers in production, the same `src/village.js` in both. Art is drawn in
+code and every sound is synthesized.
 
-## Sound and weather
+## License
 
-All sound is synthesized in `public/audio.js`: footsteps per surface and
-distance, birds, crickets, owl, frogs, wind, water, rain, anvil, forge,
-tavern clinks, the omen. Nobody speaks. Weather drifts once a game hour
-(clear, cloudy, rain); `OMEN_WEATHER=rain` pins it.
-
-## Files
-
-- `src/village.js`: world state and websocket protocol, runtime-agnostic
-- `server.ts`: local Bun server around it
-- `worker.js`, `wrangler.jsonc`, `public/_headers`: the Cloudflare deploy
-- `public/shared/world.js`: map, places, pathfinding, clock (shared with the client)
-- `public/shared/traits.js`: random characters
-- `public/brain.js`: perceive, prompt, decide
-- `public/models.js`: adapters for every mind
-- `public/render.js`: pixel renderer, all art drawn in code
-- `public/app.js`: setup, HUD, rail, camera
+MIT. See [LICENSE](LICENSE) and, for what the browser loads from elsewhere,
+[THIRD_PARTY.md](THIRD_PARTY.md).
