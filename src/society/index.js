@@ -8,7 +8,7 @@
 import COUNCIL from "../tasks.json" with { type: "json" };
 import SEED from "../kb-seed.json" with { type: "json" };
 import { Index } from "./kb.js";
-import { ADAPTERS } from "./adapters.js";
+import { ADAPTERS, USER_AGENT } from "./adapters.js";
 import * as apfree from "./apfree.js";
 import { DAY_MS } from "../../public/shared/world.js";
 
@@ -320,14 +320,14 @@ export class Society {
       if (source === "wikipedia") {
         const title = decodeURIComponent((/^https:\/\/en\.wikipedia\.org\/wiki\/([^#?]+)/.exec(url) ?? [])[1] ?? "");
         if (!title) return false;
-        const r = await this.fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`, { headers: { "User-Agent": "omen-village/1.0" } });
+        const r = await this.fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`, { headers: { "User-Agent": USER_AGENT } });
         if (r.status === 404) return false;
         if (!r.ok) return null; // could not check: neither true nor false
         text = (await r.json()).extract ?? "";
       } else {
         const id = (/openalex\.org\/(W\d+)/.exec(url) ?? [])[1];
         if (!id) return false;
-        const r = await this.fetch(`https://api.openalex.org/works/${id}?select=title,abstract_inverted_index`, { headers: { "User-Agent": "omen-village/1.0" } });
+        const r = await this.fetch(`https://api.openalex.org/works/${id}?select=title,abstract_inverted_index`, { headers: { "User-Agent": USER_AGENT } });
         if (r.status === 404) return false;
         if (!r.ok) return null;
         const w = await r.json(), words = [];

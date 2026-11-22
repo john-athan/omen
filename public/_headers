@@ -15,14 +15,14 @@
   X-Robots-Tag: noindex, nofollow
 
 /
-  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   Content-Type: text/html; charset=utf-8
 
 /index.html
-  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /delivered.html
-  Content-Security-Policy: default-src 'none'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* https:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 # The puzzle sandbox: eval for villager-written code, and no network at all.
 /sandbox-worker.js

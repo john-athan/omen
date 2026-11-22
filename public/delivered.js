@@ -1,6 +1,6 @@
 // The public record: each task with what is settled, each search with its
 // record curve, and the decision log.
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+import { esc, href } from "./shared/text.js";
 
 function curve(history, known) {
   if (!history.length) return "";
@@ -21,7 +21,7 @@ for (const t of r.tasks ?? []) {
     const agreed = t.items.filter((i) => i.label);
     out.push(`<article class="task"><h2>${esc(t.title)}</h2><p>${esc(t.question)}</p>
       <div class="bar" title="${t.done} of ${t.total} settled"><b data-w="${pct}"></b></div><p class="hint">${t.done} of ${t.total} settled by three villagers · ${esc(t.status)}</p>
-      <ul class="items">${agreed.slice(-12).reverse().map((i) => `<li><b>${esc(String(i.label).replace(/_/g, " "))}</b> <a href="${esc(i.url)}" rel="noopener">${esc(i.title)}</a>${i.plain ? `<em>${esc(i.plain)}</em>` : ""}<small>${esc(i.agreement)}</small></li>`).join("")}</ul></article>`);
+      <ul class="items">${agreed.slice(-12).reverse().map((i) => `<li><b>${esc(String(i.label).replace(/_/g, " "))}</b> <a href="${href(i.url)}" rel="noopener">${esc(i.title)}</a>${i.plain ? `<em>${esc(i.plain)}</em>` : ""}<small>${esc(i.agreement)}</small></li>`).join("")}</ul></article>`);
   } else {
     out.push(`<article class="task"><h2>${esc(t.title)}</h2><p>${esc(t.question)}</p>
       <p class="big">${t.best ?? "none yet"}${t.known ? `<small> of a known ${t.known}</small>` : ""}</p>${curve(t.history ?? [], t.known)}

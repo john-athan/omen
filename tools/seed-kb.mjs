@@ -5,7 +5,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const UA = 'omen-village-seed/1.0 (https://github.com/john-athan/omen)';
+import { USER_AGENT as UA } from '../src/society/adapters.js';
 const API = 'https://en.wikipedia.org/w/api.php';
 const OUT = resolve(dirname(fileURLToPath(import.meta.url)), '../src/kb-seed.json');
 const CAP = 1500;

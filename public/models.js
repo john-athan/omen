@@ -9,7 +9,8 @@ export const PRESETS = {
   custom: { label: "Other (OpenAI-compatible)", base: "http://localhost:8000/v1", hint: "Any server speaking /v1/chat/completions with CORS enabled" },
 };
 
-const WLLAMA = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.8.1/esm";
+// wllama 3.8.1, vendored from npm: see public/vendor/wllama/README.md.
+const WLLAMA = "/vendor/wllama";
 
 // What runs inside the tab: llama.cpp compiled to WebAssembly (wllama) on
 // WebGPU. Chosen by measuring the game's own prompts (in-character turns,
@@ -41,7 +42,7 @@ export class WllamaMind {
     if (!navigator.gpu) throw new Error("This browser has no WebGPU.");
     const gpu = fullGpu(await navigator.gpu.requestAdapter());
     const { Wllama } = await import(`${WLLAMA}/index.js`);
-    this.w = new Wllama({ default: `${WLLAMA}/wasm/wllama.wasm` }, { suppressNativeLog: true });
+    this.w = new Wllama({ default: `${WLLAMA}/wllama.wasm` }, { suppressNativeLog: true });
     await crashed(this.m, this.w.loadModelFromUrl(this.m.url, {
       n_ctx: 6144, n_gpu_layers: gpu ? 999 : 0, reasoning: false,
       progressCallback: ({ loaded, total }) => onProgress?.(total ? loaded / total : 0, `Downloading ${this.m.label}: ${(loaded / 1e9).toFixed(2)} of ${(total / 1e9).toFixed(2)} GB, once`),

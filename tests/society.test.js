@@ -197,3 +197,31 @@ test("household: two villagers of one device hold separate leases but count as o
   s.leases.set("dev1#b", { piece: "tag", taskId: "council", ids: [id], until: Date.now() + 60000 });
   expect((await s.done("dev1", { piece: "tag", taskId: "council", answers: [{ id, label: "verkehr" }] }, "b")).taken).toBe(0);
 });
+
+// A proposal comes from a stranger, so its source must not turn the village into
+// a fetcher of any URL, nor plant a script link on the public record page.
+test("an OParl source is fetched from known council servers only, and only web links survive", async () => {
+  const { ADAPTERS, OPARL_HOSTS } = await import("../src/society/adapters.js");
+  const asked = [];
+  const page = (next) => ({ ok: true, json: async () => ({ data: [
+    { id: "https://www.muenchen-transparent.de/p/1", name: "A council paper with a long title", web: "javascript:alert(1)" },
+    { id: "https://www.muenchen-transparent.de/p/2", name: "Another council paper, also long", web: "https://www.muenchen-transparent.de/antraege/2" },
+  ], links: { next } }) });
+  const fetchFn = async (u) => { asked.push(String(u)); return page(asked.length === 1 ? "https://elsewhere.example/oparl/page2" : null); };
+
+  await expect(ADAPTERS.oparl({ url: "https://evil.example/oparl/papers" }, 20, fetchFn)).rejects.toThrow("not a known OParl server");
+  await expect(ADAPTERS.oparl({ url: "http://www.muenchen-transparent.de/oparl/v1.0/paper" }, 20, fetchFn)).rejects.toThrow("not an https URL");
+  expect(asked).toEqual([]);
+
+  const items = await ADAPTERS.oparl({ url: `https://${OPARL_HOSTS[0]}/oparl/v1.0/paper` }, 20, fetchFn);
+  expect(asked).toHaveLength(1); // the paging link pointed at another host and was not followed
+  expect(items.map((i) => i.url)).toEqual(["", "https://www.muenchen-transparent.de/antraege/2"]);
+});
+
+test("the page keeps a link only when it is a web address", async () => {
+  const { href, esc } = await import("../public/shared/text.js");
+  expect(href("javascript:alert(1)")).toBe("#");
+  expect(href("data:text/html,<b>")).toBe("#");
+  expect(href('https://example.org/?a="b"')).toBe("https://example.org/?a=&quot;b&quot;");
+  expect(esc("<img onerror=x>")).toBe("&lt;img onerror=x&gt;");
+});

@@ -32,7 +32,8 @@ bun server.ts                  # http://localhost:7777
 OMEN_HOUR=21 bun server.ts     # start at night
 ```
 
-Open it in two tabs, or on two machines, and the village fills.
+Open it in two or three tabs and the village fills. The local server listens
+on this machine only; to play with others, put it on Cloudflare (below).
 
 <img src="assets/making.png" alt="The making screen: 'Make a mortal. Then haunt it.' A rolled character with temperament bars, wants, fears, secret, quirk and speech, and the choice of mind." width="100%">
 

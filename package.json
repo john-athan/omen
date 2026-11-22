@@ -1,10 +1,20 @@
 {
   "name": "omen",
+  "version": "0.1.0",
+  "description": "A village of small minds: every villager is someone's own local language model, and you are only the voice in its head.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/john-athan/omen.git"
+  },
+  "homepage": "https://github.com/john-athan/omen#readme",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "bun server.ts",
     "dev": "bun --watch server.ts",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "bun test",
+    "check": "tools/validate.sh"
   }
 }

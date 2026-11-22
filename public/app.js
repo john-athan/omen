@@ -6,9 +6,9 @@ import { Brain } from "./brain.js";
 import { PIECE_LABEL } from "./work.js";
 import { NEEDS, levelFor, titleFor, workplace } from "./shared/life.js";
 import * as audio from "./audio.js";
+import { esc } from "./shared/text.js";
 
 const $ = (s) => document.querySelector(s);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const store = {
   get(k, d) { try { return JSON.parse(localStorage.getItem(`omen:${k}`)) ?? d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(`omen:${k}`, JSON.stringify(v)); } catch { /* private mode */ } },

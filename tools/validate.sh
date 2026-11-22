@@ -17,6 +17,13 @@ for f in worker.js public/*.js public/shared/*.js src/*.js src/society/*.js tool
 done
 echo "ok"
 
+step "vendored wllama is exactly what public/vendor/wllama/README.md says"
+check sh -c 'cd public/vendor/wllama && for f in index.js wllama.wasm; do
+  want=$(grep -E "^\| $f \|" README.md | awk "{print \$4}")
+  have=$(shasum -a 256 "$f" | cut -d" " -f1)
+  [ -n "$want" ] && [ "$want" = "$have" ] || { echo "$f: $have, README says ${want:-nothing}"; exit 1; }
+done'
+
 step "wrangler.jsonc is generic: workers.dev, no route to anyone's domain"
 check node -e '
   const s = require("fs").readFileSync("wrangler.jsonc", "utf8").replace(/^\s*\/\/.*$/mg, "");
