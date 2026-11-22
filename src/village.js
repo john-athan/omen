@@ -144,6 +144,8 @@ export class Village {
       // Cosmetic and client-reported: progress lives on the player's device.
       const level = Math.max(1, Math.min(99, Number(m.level) || 1)), title = clean(m.title, 20);
       const promoted = title && title !== a.title;
+      // Without this a client could fill every chronicle with level-ups at its full message rate.
+      if (level === a.level && !promoted) return;
       a.level = level; if (title) a.title = title;
       this.emit({ kind: "level", who: a.id, name: a.name, text: promoted ? `${a.name} is now a ${a.title} ${a.job}` : `${a.name} has grown better at being a ${a.job}`, hearers: this.near(a.x, a.y) });
     }

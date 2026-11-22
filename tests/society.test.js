@@ -225,3 +225,13 @@ test("the page keeps a link only when it is a web address", async () => {
   expect(href('https://example.org/?a="b"')).toBe("https://example.org/?a=&quot;b&quot;");
   expect(esc("<img onerror=x>")).toBe("&lt;img onerror=x&gt;");
 });
+
+test("a label must be one of the task's own labels, not a prototype name or an array", async () => {
+  const s = new Society(new MemoryStore(), { now: () => Date.now() });
+  await s.load(); await s.loadItems(s.tasks.get("council"));
+  const piece = s.tagPiece(s.tasks.get("council"), "w1");
+  const id = piece.ids.find((x) => !s.answersOf("council").has(x));
+  s.leases.set("w1", { piece: "tag", taskId: "council", ids: [id], until: Date.now() + 60000 });
+  const r = await s.done("w1", { piece: "tag", taskId: "council", answers: [{ id, label: "constructor" }, { id, label: "toString" }, { id, label: ["verkehr"] }] });
+  expect(r.taken).toBe(0);
+});

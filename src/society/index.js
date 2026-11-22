@@ -234,7 +234,8 @@ export class Society {
     let taken = 0, checkOk = 0, checkBad = 0;
     for (const a of m.answers.slice(0, BATCH)) {
       const id = String(a?.id ?? "");
-      if (!lease.ids.includes(id) || !(a.label in t.params.labels)) continue;
+      // Own string keys only: `in` accepts "constructor", and an array that stringifies to a label.
+      if (!lease.ids.includes(id) || typeof a.label !== "string" || !Object.hasOwn(t.params.labels, a.label)) continue;
       if (gold[id]) { const ok = gold[id] === a.label; ok ? checkOk++ : checkBad++; this.credit(who, ok); }
       const list = ans.get(id) ?? [];
       if (list.length >= NEEDED || list.some((x) => x.who === who)) continue;
