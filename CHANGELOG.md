@@ -6,6 +6,8 @@ versioning while pre-1.0 (breaking changes may land in minor releases).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-22
+
 ### Changed
 - Compatibility date 2026-10-01, deploys through the pinned wrangler, and `workers_dev` and `preview_urls` set explicitly (workers.dev on, preview addresses off)
 
