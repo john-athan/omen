@@ -30,6 +30,19 @@ check node -e '
   const w = JSON.parse(s);
   if (w.routes) throw new Error("routes belong in wrangler.local.jsonc, which is git-ignored");
   if (w.workers_dev !== true) throw new Error("workers_dev must stay true");
+  if (w.preview_urls !== false) throw new Error("preview_urls must stay false");
+'
+
+step "the pages carry no inline script or style, so their 'self' policy is the whole policy"
+# public/_headers allows only 'self' for scripts and styles. An inline block or
+# a style= attribute would be refused by the browser without a word, so catch it
+# here rather than in a blank page. (scripts/csp is for pages that need inline code.)
+check node -e '
+  for (const f of require("fs").readdirSync("public").filter((n) => n.endsWith(".html"))) {
+    const h = require("fs").readFileSync("public/" + f, "utf8");
+    const inline = [...h.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].filter((m) => m[1].trim());
+    if (inline.length || /<style\b|\sstyle=/.test(h)) throw new Error(f + " has inline script or style");
+  }
 '
 
 step "no one's own deployment leaks into the public code"

@@ -17,5 +17,8 @@
   "vars": { "OMEN_OPEN_AT": "3", "OMEN_VOTE_MIN": "2" },
   // Served on workers.dev. For your own domain add
   // "routes": [{ "pattern": "omen.example.org", "custom_domain": true }]
-  "workers_dev": true
+  // Someone deploying their own village needs this one address. Per-version
+  // preview addresses serve the same Worker a second time, so they stay off.
+  "workers_dev": true,
+  "preview_urls": false
 }

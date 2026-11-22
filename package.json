@@ -13,7 +13,7 @@
   "scripts": {
     "start": "bun server.ts",
     "dev": "bun --watch server.ts",
-    "deploy": "wrangler deploy",
+    "deploy": "tools/validate.sh && ../toolbox/scripts/with-cf wrangler deploy -c wrangler.local.jsonc",
     "test": "bun test",
     "check": "tools/validate.sh"
   }
